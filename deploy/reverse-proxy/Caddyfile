@@ -1,0 +1,7 @@
+example.com {
+    encode gzip
+    request_body {
+        max_size 50MB
+    }
+    reverse_proxy 127.0.0.1:5000
+}

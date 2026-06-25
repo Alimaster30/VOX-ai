@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: VOX
+    orgId: 1
+    folder: VOX
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

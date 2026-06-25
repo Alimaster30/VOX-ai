@@ -1,0 +1,10 @@
+[Unit]
+Description=VOX maintenance cleanup
+
+[Service]
+Type=oneshot
+User=vox
+Group=vox
+WorkingDirectory=/opt/vox
+EnvironmentFile=/opt/vox/.env
+ExecStart=/opt/vox/.venv/bin/python /opt/vox/maintenance.py

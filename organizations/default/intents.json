@@ -1,0 +1,279 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "سلام", "السلام علیکم", "اسلام علیکم", "ہیلو", "ہائے",
+        "hello", "hi", "assalam o alaikum", "aoa", "assalamualaikum",
+        "good morning", "good afternoon", "good evening",
+        "صبح بخیر", "شام بخیر",
+        "kya aap madad kar sakte hain", "kya aap madad kar sakte hai",
+        "hello kya aap madad kar sakte hain", "madad chahiye",
+        "help chahiye", "can you help me", "assalam o alaikum kya aap"
+      ],
+      "responses_urdu": ["وعلیکم السلام! میں ایئر یونیورسٹی ملتان کیمپس کا ورچوئل اسسٹنٹ ہوں۔ آپ کا کیا سوال ہے؟"],
+      "responses_english": ["Wa Alaikum Assalam! I am the virtual assistant of Air University Multan Campus. How can I help you?"]
+    },
+    {
+      "tag": "admission_process",
+      "patterns": [
+        "داخلے کا طریقہ", "داخلہ کیسے لیں", "ایڈمیشن کیسے لینا ہے",
+        "داخلہ کیسے ہوگا", "داخلہ فارم", "آن لائن اپلائی",
+        "admission process", "how to apply", "how to get admission",
+        "admission procedure", "online application", "admission form",
+        "apply kaise karen", "dakhla kaise len", "dakhla ksy len",
+        "admission kaise len", "admission ksy len",
+        "dakhlay ki procedure", "admission ke steps",
+        "kya documents chahiye admission ke liye",
+        "داخلے کے لیے کیا کرنا ہوگا", "داخلہ لینا ہے",
+        "dakhla kaise lena hai", "dakhla lena hai", "admission lena hai",
+        "admission kaise lena hai", "online apply kaise karen",
+        "online apply kaise karein", "apply online kaise karen"
+      ],
+      "responses_urdu": ["داخلے کے لیے ہماری ویب سائٹ www.au.edu.pk پر آن لائن اپلائی کریں۔ ضروری دستاویزات میں تعلیمی سرٹیفکیٹس، CNIC اور تصاویر شامل ہیں۔ کیا آپ کسی خاص پروگرام کے بارے میں جاننا چاہتے ہیں؟"],
+      "responses_english": ["Apply online at www.au.edu.pk. Required documents include educational certificates, CNIC, and photos. Would you like to know about a specific program?"]
+    },
+    {
+      "tag": "eligibility",
+      "patterns": [
+        "اہلیت کیا ہے", "کیا اہلیت چاہیے", "داخلے کے لیے کیا چاہیے",
+        "کتنے نمبر چاہیے", "کم از کم نمبر", "انٹرمیڈیٹ کے بعد",
+        "میٹرک کے بعد", "FSc کے بعد", "ICS کے بعد",
+        "eligibility criteria", "minimum marks", "qualification needed",
+        "entry requirements", "merit criteria", "CGPA requirement",
+        "GAT test", "NTS test", "entry test", "interview required",
+        "eligibility kya hai", "marks kitne chahiye",
+        "kitne percent chahiye", "konsi degree chahiye",
+        "FSc ke baad", "ICS ke baad", "intermediate ke baad",
+        "matric ke baad kya", "bachelor ke baad",
+        "dakhle ke liye kitne number chahiye", "kitne number chahiye",
+        "kitne number chahiye dakhle ke liye", "dakhle ke liye kitne marks",
+        "intermediate ke baad kya karna hoga", "fsc ke baad kya karna hoga",
+        "ics ke baad kya karna hoga", "intermediate ke baad kya karain"
+      ],
+      "responses_urdu": ["انڈرگریجویٹ کے لیے انٹرمیڈیٹ میں کم از کم 50 فیصد نمبر درکار ہیں۔ کمپیوٹر سائنس کے لیے ICS یا Pre-Engineering ترجیحی ہے۔ ماسٹرز کے لیے 16 سال کی تعلیم اور GAT ضروری ہے۔ کیا آپ کسی خاص پروگرام کی اہلیت جاننا چاہتے ہیں؟"],
+      "responses_english": ["Undergraduate requires minimum 50% in Intermediate. ICS or Pre-Engineering preferred for CS. Masters requires 16 years education and GAT. Would you like eligibility for a specific program?"]
+    },
+    {
+      "tag": "fee_structure",
+      "patterns": [
+        "فیس کتنی ہے", "فیس بتائیں", "فیس سٹرکچر", "کتنی فیس لگتی ہے",
+        "سمسٹر فیس", "پہلے سمسٹر کی فیس", "سالانہ فیس",
+        "fee structure", "tuition fee", "semester fee", "fee details",
+        "how much does it cost", "program fee", "per credit hour fee",
+        "total fee", "fee kitni hai", "fees kitni hain",
+        "kitna kharcha hai", "cost kya hai", "fee batao",
+        "pehle semester ki fee", "annual fee kitni hai"
+      ],
+      "responses_urdu": ["فیس پروگرام کے حساب سے مختلف ہے۔ BS Computer Science کی فیس 8500 روپے فی کریڈٹ آور ہے۔ پہلے سمسٹر کی تخمینی فیس 1 لاکھ 27 ہزار روپے ہے۔ کیا آپ کسی خاص پروگرام کی فیس جاننا چاہتے ہیں؟"],
+      "responses_english": ["Fees vary by program. BS Computer Science is PKR 8,500 per credit hour, first semester approximately PKR 1,27,000. Would you like the fee for a specific program?"]
+    },
+    {
+      "tag": "programs_list",
+      "patterns": [
+        "کون کون سے پروگرام ہیں", "پروگرامز کی لسٹ", "ڈگری پروگرامز",
+        "کون سے کورسز ہیں", "کیا پڑھا سکتے ہیں", "کیا کیا ڈگریاں", "ڈگریاں دستیاب",
+        "what programs are available", "courses offered", "program list",
+        "available degrees", "undergraduate programs", "graduate programs",
+        "konse programs hain", "konse courses hain", "kya kya programs hain",
+        "degrees available", "kya padh sakte hain", "kya kya degrees hain",
+        "kon kon se program hain", "kon kon se programs hain",
+        "kon konse programs hain", "kon kon si degree", "kon kon si degrees",
+        "kya kya degrees dastiyab hain", "kya kya programs dastiyab hain",
+        "list of programs", "list of degrees"
+      ],
+      "responses_urdu": ["ہمارے پاس انڈرگریجویٹ میں BS Computer Science، BS AI، BS Data Science، BS Cyber Security، BBA شامل ہیں۔ گریجویٹ میں MS Computer Science، MS AI، MBA اور PhD پروگرامز بھی دستیاب ہیں۔"],
+      "responses_english": ["We offer BS Computer Science, BS AI, BS Data Science, BS Cyber Security, BBA at undergraduate level. Graduate programs include MS Computer Science, MS AI, MBA and PhD programs."]
+    },
+    {
+      "tag": "duration",
+      "patterns": [
+        "کتنے سال کا کورس ہے", "پروگرام کتنے سال کا ہے", "کب تک پڑھنا ہوگا",
+        "ڈگری کتنے سال میں ملے گی", "کتنے سمسٹر ہوتے ہیں",
+        "how many years", "program duration", "course duration",
+        "kitne saal ka course hai", "kitne saal mein degree milegi",
+        "program kitne saal ka hai", "kab tak parhna hoga",
+        "4 year program", "2 year program", "how many semesters", "kitne semester hote hain",
+        "BS kitne saal", "BS kitne saal ka hai", "BS kitne saal ka program hai",
+        "BS kitne saal mein mukammal hoti hai", "BS kitne saal mein khatam hogi",
+        "BS karne mein kitna waqt", "BS karne mein kitna waqt lage ga",
+        "MS kitne saal ka hai", "kitne semester hote hain BS mein",
+        "kitne saal mein degree mukammal", "program kitna lamba hai"
+      ],
+      "responses_urdu": ["BS پروگرامز 4 سال کے ہیں۔ MS پروگرامز 2 سال کے ہیں۔ PhD پروگرام 3 سے 5 سال کا ہوتا ہے۔ BBA بھی 4 سال کا ہے۔"],
+      "responses_english": ["BS programs are 4 years. MS programs are 2 years. PhD is 3 to 5 years. BBA is also 4 years."]
+    },
+    {
+      "tag": "scholarship",
+      "patterns": [
+        "سکالرشپ", "سکالرشپ ملتی ہے", "وظیفہ", "وظائف",
+        "مالی مدد", "مالی مشکلات", "غریب طالب علم", "غریب ہیں",
+        "فیس میں کمی", "فیس معافی", "مدد ملتی ہے",
+        "فیس قسطوں میں", "قسط کی سہولت", "تنخواہ کم ہے", "مدد مل سکتی ہے",
+        "scholarship", "financial aid", "financial assistance",
+        "fee concession", "fee waiver", "need based scholarship",
+        "merit scholarship", "HEC scholarship", "government scholarship",
+        "installment facility", "payment plan",
+        "scholarship milti hai", "wazifa", "wazaif",
+        "fee maafi", "fee kam", "mali madad", "gharib hain",
+        "paisa nahi", "afford nahi kar sakte", "fee nahi de sakte",
+        "koi madad milti hai", "financial support chahiye",
+        "hum gharib hain kya mali madad mil sakti hai",
+        "kya mali madad mil sakti hai", "mali madad mil sakti hai",
+        "hum gharib hain", "kya koi madad mil sakti hai",
+        "scholarship milti hai kya", "kya scholarship milti hai",
+        "fee qiston mein", "fee qiston mein di ja sakti hai",
+        "qiston mein fee", "kya fee qiston mein de sakte hain"
+      ],
+      "responses_urdu": ["جی ہاں، مالی مدد دستیاب ہے۔ میرٹ بیسڈ سکالرشپ میں 85 فیصد سے زیادہ نمبروں پر 25 سے 75 فیصد فیس میں کمی ملتی ہے۔ نیڈ بیسڈ سکالرشپ مالی مشکلات کی بنیاد پر 20 سے 40 فیصد کمی دیتی ہے۔ HEC اور حکومتی سکالرشپ بھی دستیاب ہیں۔ قسط کی سہولت بھی موجود ہے۔ تفصیلات کے لیے ایڈمیشن آفس سے رابطہ کریں۔"],
+      "responses_english": ["Yes, financial assistance is available. Merit-based scholarships offer 25-75% fee reduction for 85%+ marks. Need-based scholarships offer 20-40% reduction based on financial difficulty. HEC and government scholarships also available. Installment facility is also offered."]
+    },
+    {
+      "tag": "contact_info",
+      "patterns": [
+        "رابطہ نمبر", "فون نمبر", "ای میل", "کس سے رابطہ کریں",
+        "ہیلپ لائن", "آفس کا نمبر", "واٹس ایپ نمبر", "نمبر چاہیے", "کس سے بات کریں",
+        "contact number", "phone number", "email address",
+        "helpline number", "contact details", "admission office contact",
+        "office hours", "help desk",
+        "number kya hai", "contact kaise karen", "kahan se milenge",
+        "office ka number", "whatsapp number"
+      ],
+      "responses_urdu": ["ایڈمیشن آفس سے رابطہ کریں۔ فون نمبر 92-61-9213456 پلس، ای میل admissions@au.edu.pk، واٹس ایپ 92-300-1234567 پلس۔ آفس کا وقت صبح 8 بجے سے شام 5 بجے تک ہے۔"],
+      "responses_english": ["Contact Admission Office: Phone +92-61-9213456, Email admissions@au.edu.pk, WhatsApp +92-300-1234567. Office hours 8 AM to 5 PM."]
+    },
+    {
+      "tag": "campus_info",
+      "patterns": [
+        "کیمپس کہاں ہے", "یونیورسٹی کا پتہ", "یونیورسٹی کہاں ہے",
+        "کیمپس کی سہولات", "کیمپس میں کیا ہے", "یونیورسٹی میں کیا کیا سہولات", "سہولات کیا ہیں",
+        "campus location", "university address", "where is the university",
+        "campus facilities", "university location", "university facilities",
+        "campus kahan hai", "university kahan hai", "address kya hai",
+        "campus mein kya hai", "facilities kya hain", "university mein kya kya suholat"
+      ],
+      "responses_urdu": ["ایئر یونیورسٹی ملتان کیمپس ملتان، پنجاب میں واقع ہے۔ کیمپس میں جدید کمپیوٹر لیبز، لائبریری، کیفے ٹیریا، کھیل کی سہولات، وائی فائی، ہاسٹل اور ٹرانسپورٹ سروس موجود ہے۔"],
+      "responses_english": ["Air University Multan Campus is located in Multan, Punjab. Campus has modern computer labs, library, cafeteria, sports facilities, WiFi, hostel and transport service."]
+    },
+    {
+      "tag": "hostel",
+      "patterns": [
+        "ہاسٹل", "ہاسٹل کی سہولت", "رہائش", "کمرہ ملے گا",
+        "لڑکیوں کا ہاسٹل", "لڑکوں کا ہاسٹل", "کہاں رہیں گے", "باہر سے آنے والے", "رہنا کہاں",
+        "hostel", "hostel facility", "accommodation", "hostel available",
+        "boys hostel", "girls hostel", "hostel fee",
+        "hostel hai kya", "rehna chahte hain", "hostel milega",
+        "hostel ki fee", "hostel mein rehna", "bahar se aane wale"
+      ],
+      "responses_urdu": ["جی ہاں، لڑکوں اور لڑکیوں کے لیے الگ ہاسٹل کی سہولت موجود ہے۔ ہاسٹل فیس اور دستیابی کے لیے ایڈمیشن آفس سے رابطہ کریں۔"],
+      "responses_english": ["Yes, separate hostels for boys and girls are available. Contact the admission office for hostel fee and availability details."]
+    },
+    {
+      "tag": "transport",
+      "patterns": [
+        "ٹرانسپورٹ", "بس سروس", "یونیورسٹی بس", "آنے جانے کی سہولت",
+        "گھر سے یونیورسٹی", "کیسے جائیں", "یونیورسٹی کیسے پہنچیں",
+        "transport", "bus service", "university bus", "transport facility",
+        "transport available", "bus route",
+        "transport hai kya", "bus milti hai", "aane jaane ka kya hai",
+        "university ki bus", "transport service", "ghar se university kaise jayen"
+      ],
+      "responses_urdu": ["یونیورسٹی ٹرانسپورٹ سروس دستیاب ہے۔ شہر کے مختلف علاقوں سے بسیں چلتی ہیں۔ روٹ اور ٹائمنگ کے لیے ایڈمیشن آفس سے رابطہ کریں۔"],
+      "responses_english": ["University transport service is available with buses from different areas of the city. Contact the admission office for routes and timings."]
+    },
+    {
+      "tag": "attendance",
+      "patterns": [
+        "حاضری", "غیر حاضری", "حاضری کتنی ہونی چاہیے",
+        "attendance", "attendance policy", "minimum attendance",
+        "absent ho sakta hun", "kitni attendance chahiye",
+        "attendance kitni honi chahiye", "absent hone ka kya hoga",
+        "leave policy", "medical leave",
+        "hazri", "haazri", "hazri kitni", "hazri kitni honi chahiye",
+        "haazri kitni honi chahiye", "ghair hazri", "ghair haazri",
+        "kitni ghair hazri", "kitni ghair hazri ho sakti hai",
+        "kitni baar ghair haazir ho sakte hain", "ghair haazir",
+        "kitni baar absent ho sakte hain"
+      ],
+      "responses_urdu": ["کم از کم 75 فیصد حاضری ضروری ہے۔ اس سے کم حاضری پر امتحان میں بیٹھنے کی اجازت نہیں ملتی۔ طبی وجوہات پر چھٹی کے لیے متعلقہ شعبے سے رابطہ کریں۔"],
+      "responses_english": ["Minimum 75% attendance is required. Below this, students are not allowed to sit in exams. Contact the relevant department for medical leave."]
+    },
+    {
+      "tag": "exams",
+      "patterns": [
+        "امتحان", "پیپر", "نتیجہ", "امتحان کب ہوگا", "پیپر کب ہے",
+        "exam", "examination", "result", "paper", "test schedule",
+        "exam schedule", "result kab aayega", "paper kab hai",
+        "imtihan kab hai", "result kab milega", "grade kya hai",
+        "GPA", "CGPA", "transcript",
+        "imtihan kab hoga", "imtihan kab honge", "paper kab honge",
+        "nateeja", "nateeja kab", "nateeja kab aaye ga",
+        "nateeja kab aayega", "natija", "natija kab", "natija kab milega",
+        "exam kab hai", "exam kab hoga", "test kab hai"
+      ],
+      "responses_urdu": ["امتحانات کا شیڈول یونیورسٹی کی ویب سائٹ پر دستیاب ہوتا ہے۔ نتائج اور گریڈز کے لیے اپنے شعبے یا امتحانی آفس سے رابطہ کریں۔"],
+      "responses_english": ["Exam schedules are available on the university website. Contact your department or exam office for results and grades."]
+    },
+    {
+      "tag": "computer_science",
+      "patterns": [
+        "کمپیوٹر سائنس", "بی ایس کمپیوٹر سائنس", "BSCS", "bscs",
+        "BSCS کی فیس", "BSCS کا پروگرام", "BSCS میں داخلہ",
+        "computer science", "BS computer science", "BSCS program",
+        "cs program", "computer science ki fee", "cs ki fee", "BSCS ki fee", "bscs ki fee",
+        "computer science mein admission", "cs mein admission",
+        "computer science eligibility", "cs eligibility",
+        "computer science duration", "cs kitne saal ka hai"
+      ],
+      "responses_urdu": ["BS Computer Science 4 سال کا پروگرام ہے۔ فیس 8500 روپے فی کریڈٹ آور ہے۔ اہلیت کے لیے انٹرمیڈیٹ میں 50 فیصد نمبر اور ICS یا Pre-Engineering ترجیحی ہے۔ داخلے کے لیے www.au.edu.pk پر اپلائی کریں۔"],
+      "responses_english": ["BS Computer Science is a 4-year program. Fee is PKR 8,500 per credit hour. Eligibility requires 50% in Intermediate, ICS or Pre-Engineering preferred. Apply at www.au.edu.pk."]
+    },
+    {
+      "tag": "rules_regulations",
+      "patterns": [
+        "قوانین", "ضوابط", "یونیورسٹی کے قوانین", "نظم و ضبط", "نقل", "نقل کرنا",
+        "نقل کرنے پر کیا ہوگا", "نقل کی سزا", "بدتمیزی کی سزا",
+        "پابندی", "پابندیاں", "کیا پابندیاں ہیں", "کیا کیا پابندیاں ہیں",
+        "یونیورسٹی میں کیا پابندیاں ہیں", "یونیورسٹی میں کیا کیا پابندیاں ہیں",
+        "یونیورسٹی میں کیا کیا پابندیاں ہیں؟", "کیا کچھ منع ہے", "کیا ممنوع ہے",
+        "rules", "regulations", "university rules", "discipline policy",
+        "code of conduct", "misconduct", "cheating policy", "cheating",
+        "restrictions", "what restrictions", "what are the restrictions",
+        "what are the rules", "what is not allowed", "what is forbidden",
+        "university ke rules", "kya rules hain", "discipline kya hai",
+        "cheating ka kya hoga", "misconduct rules", "naql karna", "naql ka kya hoga",
+        "pabandi", "pabandiyaan", "pabandiyan", "kya pabandiyaan hain",
+        "kya kya pabandiyaan hain", "university mein kya pabandiyaan hain",
+        "university mein kya kya pabandiyaan hain", "kya pabandi hai",
+        "qawaneen", "qawaneen kya hain", "university ke qawaneen",
+        "university ke qawaneen kya hain", "qanoon", "qanoon kya hain",
+        "naqal", "naqal karne", "naqal karne par kya hoga",
+        "naqal karna", "naqal ki saza"
+      ],
+      "responses_urdu": ["یونیورسٹی کے قوانین میں 75 فیصد حاضری، نظم و ضبط، اور تعلیمی دیانتداری شامل ہے۔ مکمل ضوابط ویب سائٹ www.au.edu.pk پر دستیاب ہیں۔"],
+      "responses_english": ["University rules include 75% attendance, discipline, and academic integrity. Full regulations available at www.au.edu.pk."]
+    },
+    {
+      "tag": "transfer_human",
+      "patterns": [
+        "انسان سے بات کرنی ہے", "کسی سے بات کرائیں", "اسٹاف سے بات",
+        "talk to human", "speak to someone", "real person", "operator",
+        "human agent", "live agent",
+        "staff se baat karni hai", "kisi se baat karao",
+        "insaan se baat karni hai"
+      ],
+      "responses_urdu": ["میں آپ کو ایڈمیشن آفس سے منسلک کر رہا ہوں۔ فون نمبر 92-61-9213456 پلس، ای میل admissions@au.edu.pk۔ آفس کا وقت صبح 8 سے شام 5 بجے تک ہے۔"],
+      "responses_english": ["Connecting you to the admission office. Phone +92-61-9213456, Email admissions@au.edu.pk. Office hours 8 AM to 5 PM."]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "اللہ حافظ", "خدا حافظ", "الوداع",
+        "bye", "goodbye", "allah hafiz", "khuda hafiz",
+        "see you", "see you later", "take care", "good bye"
+      ],
+      "responses_urdu": ["آپ کا شکریہ! اللہ حافظ! اگر مزید معلومات چاہیے تو کبھی بھی رابطہ کریں۔"],
+      "responses_english": ["Thank you! Goodbye! Feel free to contact us anytime for more information."]
+    }
+  ]
+}

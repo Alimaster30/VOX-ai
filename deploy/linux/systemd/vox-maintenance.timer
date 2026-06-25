@@ -1,0 +1,10 @@
+[Unit]
+Description=Run VOX maintenance cleanup daily
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+Unit=vox-maintenance.service
+
+[Install]
+WantedBy=timers.target

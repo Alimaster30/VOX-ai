@@ -1,0 +1,92 @@
+name: VOX CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      VOX_AUTOLOAD_MODELS: "0"
+      VOX_PRODUCTION: "0"
+      VOX_DB_PATH: "./runtime_cache/ci-vox.sqlite3"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Install lightweight test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+
+      - name: Compile key entrypoints
+        run: |
+          python -m py_compile app.py backup_vox.py restore_vox.py smoke_test.py migrate_db.py maintenance.py load_test.py
+
+      - name: Run tests
+        run: |
+          python -m pytest -q
+
+  postgres-integration:
+    name: PostgreSQL Integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: vox
+          POSTGRES_PASSWORD: vox
+          POSTGRES_DB: vox_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vox -d vox_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      VOX_AUTOLOAD_MODELS: "0"
+      VOX_PRODUCTION: "0"
+      VOX_TEST_POSTGRES_URL: "postgresql://vox:vox@localhost:5432/vox_test"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Install lightweight test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-ci.txt
+
+      - name: Run PostgreSQL integration tests
+        run: |
+          python -m pytest tests/test_postgres_integration.py -q

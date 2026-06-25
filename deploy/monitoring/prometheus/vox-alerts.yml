@@ -1,0 +1,56 @@
+groups:
+  - name: vox
+    rules:
+      - alert: VOXModelsNotReady
+        expr: vox_models_ready == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: VOX models are not ready
+          description: VOX has reported models_ready=0 for more than 2 minutes.
+
+      - alert: VOXModelLoadError
+        expr: vox_models_error == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: VOX model loading failed
+          description: VOX reports a model loading error. Check logs/vox-app.log and Ollama health.
+
+      - alert: VOXHighServerErrorRate
+        expr: sum(rate(vox_http_requests_total{status=~"5.."}[5m])) / clamp_min(sum(rate(vox_http_requests_total[5m])), 0.001) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: VOX 5xx error rate is high
+          description: More than 5 percent of VOX requests have returned server errors over the last 5 minutes.
+
+      - alert: VOXHighRateLimitRate
+        expr: sum(rate(vox_http_requests_total{status="429"}[5m])) / clamp_min(sum(rate(vox_http_requests_total[5m])), 0.001) > 0.10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: VOX is rate limiting many requests
+          description: More than 10 percent of VOX requests are being rate limited. Check caller load and concurrency settings.
+
+      - alert: VOXHighAverageLatency
+        expr: vox_http_request_latency_ms_avg > 3000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: VOX average latency is high
+          description: Average observed VOX request latency is above 3 seconds.
+
+      - alert: VOXOpenHandoffsGrowing
+        expr: vox_open_handoffs > 20
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: VOX has many open handoffs
+          description: Open human handoff tickets are above 20. Operators may need to review unresolved callers.

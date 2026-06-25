@@ -1,0 +1,19 @@
+[Unit]
+Description=VOX web server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=vox
+Group=vox
+WorkingDirectory=/opt/vox
+EnvironmentFile=/opt/vox/.env
+ExecStart=/opt/vox/.venv/bin/python /opt/vox/serve.py
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

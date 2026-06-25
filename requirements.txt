@@ -1,0 +1,71 @@
+# VOX core runtime dependencies
+#
+# Install with:
+#   .\.venv\Scripts\python.exe -m pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+#
+# Notes:
+# - Qwen is pulled by Ollama, not pip:
+#     ollama pull qwen3.2:3b
+# - The Flask app uses local-first Kokoro TTS through RealtimeTTS[kokoro].
+#   gTTS and Edge TTS remain available only as explicitly configured network
+#   fallbacks.
+
+# Core web app
+flask>=3.0,<4
+waitress>=3.0,<4
+psycopg[binary]>=3.2,<4
+
+# LangChain + Ollama + Chroma
+langchain>=1.0,<2
+langchain-community>=0.4,<0.5
+langchain-ollama>=1.0,<2
+langchain-chroma>=1.0,<2
+langchain-text-splitters>=1.0,<2
+ollama>=0.6,<0.7
+chromadb>=1.0,<2
+
+# Vector search + embeddings
+sentence-transformers>=5.0,<6
+faiss-cpu>=1.10
+
+# Documents and datasets
+pypdf>=6.0,<7
+pandas>=2.2
+openpyxl>=3.1,<4
+
+# Speech-to-text
+openai-whisper>=20250625
+
+# Text-to-speech and audio I/O
+gtts>=2.5,<3
+RealtimeTTS[kokoro]>=0.7,<0.8
+pygame>=2.6,<3
+sounddevice>=0.5,<0.6
+soundfile>=0.12,<0.14
+speechrecognition>=3.14,<4
+pydub>=0.25,<0.26
+edge-tts>=7.0,<8
+imageio-ffmpeg>=0.6,<0.7
+
+# Translation
+argostranslate==1.11.0
+
+# Numeric stack
+numpy>=2.1,<2.3
+
+# Torch CUDA 12.1 wheels
+torch==2.5.1+cu121
+torchaudio==2.5.1+cu121
+
+# If Windows dependency resolution backtracks heavily, install the rest of this
+# file first, then install RealtimeTTS[kokoro] separately.
+
+# Evaluation metrics and charts
+rouge-score>=0.1,<0.2
+nltk>=3.9,<4
+jiwer>=4.0,<5
+evaluate>=0.4,<0.5
+matplotlib>=3.10,<4
+
+# Tests
+pytest>=8.0,<9

@@ -1,0 +1,199 @@
+﻿================================================================
+  VOX System — Security Implementation Document
+  VOX
+================================================================
+
+----------------------------------------------------------------
+1. INPUT VALIDATION & SANITIZATION
+----------------------------------------------------------------
+File: agi_bridge.py — sanitize_query()
+
+  - All caller speech transcribed by Whisper is sanitized before
+    processing through the pipeline
+  - Control characters (ASCII 0x00-0x1F) stripped from input
+  - Maximum query length enforced at 500 characters
+  - AGI verbose messages sanitized to prevent log injection
+    (newlines, quotes, backslashes removed before sending to
+    Asterisk)
+
+  Why it matters:
+    Prevents malformed input from crashing the pipeline or
+    injecting commands into Asterisk logs.
+
+----------------------------------------------------------------
+2. PATH TRAVERSAL PREVENTION
+----------------------------------------------------------------
+File: agi_bridge.py — safe_path()
+File: src/intent/classifier.py — load_intents()
+
+  - All file paths resolved using os.path.realpath() before use
+  - Paths validated to stay within project root directory
+  - Any path attempting to escape (e.g. ../../etc/passwd) raises
+    a ValueError and is blocked
+  - Applied to: audio file creation, ffmpeg output, intents JSON
+    loading
+
+  Why it matters:
+    Prevents an attacker from reading or writing files outside
+    the project directory through manipulated file paths.
+
+----------------------------------------------------------------
+3. SECURE FILE PERMISSIONS
+----------------------------------------------------------------
+File: setup.sh
+File: agi_bridge.py
+
+  Directory/File          Permission    Reason
+  ──────────────────────────────────────────────────────────────
+  cache/                  700           Pickle cache — owner only
+  audio_tmp/              700           Caller audio — owner only
+  enhanced_intents.json   600           Config — read by owner only
+
+  - Audio temp directory created inside project root, not /tmp
+  - /tmp is world-writable and shared — avoided entirely
+  - Caller audio files deleted immediately after playback
+  - No leftover caller data on disk
+
+  Why it matters:
+    Prevents other users on the server from reading caller audio
+    or tampering with cached model embeddings.
+
+----------------------------------------------------------------
+4. SAFE PICKLE DESERIALIZATION
+----------------------------------------------------------------
+File: src/intent/classifier.py — build_index()
+
+  - Before loading any .pkl cache file, the file's owner UID is
+    checked against the current process UID
+  - If ownership does not match, cache is deleted and rebuilt
+    from scratch
+  - Prevents a tampered cache file from executing arbitrary code
+    via Python's pickle deserialization
+
+  Why it matters:
+    Python pickle files can execute arbitrary code when loaded.
+    A tampered cache file could compromise the entire system.
+
+----------------------------------------------------------------
+5. PRIVACY — CALLER DATA PROTECTION
+----------------------------------------------------------------
+File: agi_bridge.py — safe_log()
+
+  - Raw caller query text is NEVER written to log files
+  - Logs contain only: turn number, language, intent tag,
+    confidence score
+  - Caller ID sanitized to digits and + only before logging
+  - Caller audio files deleted from disk after playback
+  - Conversation history stored in memory only (not persisted)
+
+  Log entry example:
+    Turn 3 | lang=ur | intent=fee_structure | confidence=0.97
+
+  Why it matters:
+    Callers may share sensitive personal information (financial
+    situation, family details). Logging this would violate
+    privacy regulations and university data policies.
+
+----------------------------------------------------------------
+6. ENVIRONMENT-BASED CONFIGURATION
+----------------------------------------------------------------
+File: agi_bridge.py
+File: src/intent/classifier.py
+File: setup.sh
+
+  - PROJECT_ROOT read from VOX_ROOT environment variable
+  - No hardcoded absolute paths in source code
+  - Deployment path set once in systemd service file
+  - Prevents misconfiguration when deployed to different servers
+
+  Set via systemd:
+    Environment=VOX_ROOT=/opt/vox
+
+----------------------------------------------------------------
+7. PROCESS ISOLATION (SYSTEMD HARDENING)
+----------------------------------------------------------------
+File: setup.sh — vox.service
+
+  Directive              Effect
+  ──────────────────────────────────────────────────────────────
+  NoNewPrivileges=true   Process cannot gain elevated privileges
+  PrivateTmp=true        Isolated /tmp — not shared with system
+  ProtectSystem=strict   Filesystem is read-only except allowed paths
+  ReadWritePaths=...     Only project dir and log file are writable
+  User=$USER             Runs as non-root service user
+
+  Why it matters:
+    Even if the application is compromised, the attacker cannot
+    escalate to root or access other parts of the system.
+
+----------------------------------------------------------------
+8. SUBPROCESS SECURITY
+----------------------------------------------------------------
+File: agi_bridge.py — text_to_urdu_audio()
+
+  - ffmpeg called with a list argument (not shell=True)
+    Prevents shell injection via crafted filenames
+  - timeout=30 set on all subprocess calls
+    Prevents hanging processes from blocking the call
+  - capture_output=True prevents subprocess output leaking
+    to the caller's audio stream
+
+  Why it matters:
+    shell=True with user-influenced data is a command injection
+    vulnerability. List-based subprocess calls are safe.
+
+----------------------------------------------------------------
+9. RATE LIMITING & ABUSE PREVENTION
+----------------------------------------------------------------
+File: agi_bridge.py — handle_call()
+
+  - Maximum 20 turns per call session (MAX_TURNS = 20)
+  - After 20 turns, call is automatically terminated
+  - Prevents a single caller from monopolizing server resources
+  - Caller ID logged for audit trail
+
+  Why it matters:
+    Without turn limits, a malicious caller could keep the
+    system busy indefinitely, causing denial of service for
+    other callers.
+
+----------------------------------------------------------------
+10. DEPENDENCY SECURITY
+----------------------------------------------------------------
+File: requirements.txt
+
+  - All dependencies are well-maintained open source libraries
+  - No external API keys or credentials in source code
+  - All model inference runs locally — no data sent to cloud
+  - Argos Translate runs fully offline — no translation API
+
+  Why it matters:
+    Cloud APIs introduce data privacy risks and external
+    dependencies. Fully local inference keeps all caller data
+    on-premises.
+
+================================================================
+  SECURITY SUMMARY
+================================================================
+
+  Category                    Status
+  ──────────────────────────────────────────────────────────────
+  Input Validation            Implemented
+  Path Traversal Prevention   Implemented
+  Secure File Permissions     Implemented
+  Safe Deserialization        Implemented
+  Caller Privacy / Logging    Implemented
+  Environment Configuration   Implemented
+  Process Isolation           Implemented
+  Subprocess Security         Implemented
+  Rate Limiting               Implemented
+  No External API Exposure    Implemented
+
+  Total Security Controls: 10
+  Critical Issues Resolved: 1  (unsafe pickle)
+  Medium Issues Resolved:   3  (path traversal x2, /tmp)
+  Low Issues Resolved:      3  (logging, hardcoded path, rate limit)
+
+================================================================
+  Prepared for: FYP Documentation — VOX Project
+================================================================

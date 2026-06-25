@@ -1,0 +1,185 @@
+/* ── Additional Animations & Refinements ──────────────────────────────────── */
+
+/* Pipeline node highlight for L2 (purple) */
+#pipe-l2.active .node-dot {
+  box-shadow: 0 0 15px rgba(112, 41, 211, 0.4);
+  border-color: #7029d3;
+}
+#pipe-l2.active .node-dot::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: #7029d3;
+}
+
+/* Pipeline node highlight for L3 (golden) */
+#pipe-l3.active .node-dot {
+  box-shadow: 0 0 15px rgba(196, 130, 14, 0.4);
+  border-color: #c4820e;
+}
+#pipe-l3.active .node-dot::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: #c4820e;
+}
+
+/* Pipeline node highlight for L1 (sage green) */
+#pipe-l1.active .node-dot {
+  box-shadow: 0 0 15px rgba(130, 148, 127, 0.4);
+  border-color: #82947F;
+}
+#pipe-l1.active .node-dot::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: #82947F;
+}
+
+/* Pipeline node highlight for STT */
+#pipe-stt.active .node-dot {
+  box-shadow: 0 0 15px rgba(130, 148, 127, 0.3);
+  border-color: #82947F;
+}
+#pipe-stt.active .node-dot::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: #82947F;
+}
+
+/* Processing animation for pipeline nodes */
+#pipe-l1.processing .node-dot,
+#pipe-l2.processing .node-dot,
+#pipe-l3.processing .node-dot,
+#pipe-stt.processing .node-dot {
+  animation: pulse-dot 0.6s ease-in-out infinite;
+}
+
+/* Mic button hover */
+#mic-button:hover {
+  background-color: #F5F1E9;
+  border-color: #82947F;
+}
+
+#mic-button:active {
+  transform: scale(0.95);
+}
+
+/* Mic states */
+#mic-button.recording {
+  border-color: #82947F;
+  box-shadow: 0 0 30px rgba(130, 148, 127, 0.3);
+}
+
+#mic-button.processing-state {
+  border-color: #D1CCC0;
+}
+
+/* Waveform animation during recording */
+#waveform-container.recording .waveform-bar {
+  background-color: #82947F;
+  animation: waveform-pulse 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes waveform-pulse {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  padding: 12px 20px;
+  border: 1px solid #D1CCC0;
+  background: #FDFBF7;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  animation: toast-in 0.3s ease-out, toast-out 0.3s ease-in 2.7s forwards;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.toast.error {
+  border-color: #ba1a1a;
+  color: #ba1a1a;
+}
+.toast.success {
+  border-color: #82947F;
+  color: #82947F;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes toast-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(16px); }
+}
+
+/* Test suite expanded row */
+.test-row-expanded {
+  background-color: #F5F1E9;
+  border-left: 2px solid #82947F;
+}
+.test-row-expanded td {
+  padding: 12px 16px;
+}
+
+/* RTL support for Urdu text in response */
+[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Print styles for demo */
+@media print {
+  nav, header, #waveform-container { display: none; }
+  .tab-content.active { display: block !important; overflow: visible !important; }
+}
+
+/* Status dot colors */
+.status-dot-green { color: #82947F; }
+.status-dot-yellow { color: #c4820e; }
+.status-dot-red { color: #ba1a1a; }
+
+/* Smooth tab switch */
+.tab-content {
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+.tab-content.active {
+  opacity: 1;
+}
+
+/* Layer tag colors for badges */
+.layer-badge-l1 { background-color: #82947F; color: #FDFBF7; }
+.layer-badge-l2 { background-color: #7029d3; color: #ffffff; }
+.layer-badge-l3 { background-color: #c4820e; color: #FDFBF7; }
+
+/* Evaluation loading state */
+.eval-loading .metric-card-value {
+  animation: shimmer 1.5s infinite;
+  background: linear-gradient(90deg, #F5F1E9 25%, #EEE9DE 50%, #F5F1E9 75%);
+  background-size: 200% 100%;
+  color: transparent;
+  border-radius: 4px;
+}
+
+/* Confidence bar segments */
+.conf-high { background-color: #82947F; }
+.conf-med { background-color: #c4820e; }
+.conf-low { background-color: #ba1a1a; }
+
+/* Chart canvas fixes */
+canvas {
+  max-width: 100%;
+  max-height: 300px;
+}

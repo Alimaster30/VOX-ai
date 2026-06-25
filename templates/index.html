@@ -1,0 +1,866 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VOX - Intelligence Grid</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Hanken+Grotesk:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+Arabic:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "on-secondary-container": "#333333",
+        "on-tertiary": "#ffffff",
+        "primary-container": "#82947F",
+        "on-tertiary-container": "#fbf3ff",
+        "outline": "#D1CCC0",
+        "tertiary-fixed-dim": "#d5baff",
+        "on-secondary-fixed-variant": "#344e00",
+        "surface-dim": "#E5E0D5",
+        "primary": "#82947F",
+        "surface-tint": "#82947F",
+        "on-primary-fixed": "#FDFBF7",
+        "tertiary-fixed": "#ecdcff",
+        "surface-container": "#F5F1E9",
+        "inverse-primary": "#bec2ff",
+        "surface-container-lowest": "#FDFBF7",
+        "tertiary-container": "#8a49ed",
+        "on-tertiary-fixed": "#270057",
+        "on-background": "#333333",
+        "on-primary": "#FDFBF7",
+        "outline-variant": "#E5E0D5",
+        "on-secondary-fixed": "#121f00",
+        "inverse-on-surface": "#FDFBF7",
+        "background": "#FDFBF7",
+        "surface-bright": "#FDFBF7",
+        "tertiary": "#7029d3",
+        "on-primary-fixed-variant": "#82947F",
+        "on-surface-variant": "#666666",
+        "primary-fixed": "#F5F1E9",
+        "secondary-fixed-dim": "#97da00",
+        "secondary": "#82947F",
+        "on-error": "#ffffff",
+        "secondary-fixed": "#82947F",
+        "on-primary-container": "#FDFBF7",
+        "surface-container-highest": "#E5E0D5",
+        "on-secondary": "#ffffff",
+        "inverse-surface": "#333333",
+        "on-surface": "#333333",
+        "on-error-container": "#93000a",
+        "surface-variant": "#F5F1E9",
+        "error-container": "#ffdad6",
+        "surface": "#FDFBF7",
+        "primary-fixed-dim": "#82947F",
+        "surface-container-low": "#F8F4ED",
+        "on-tertiary-fixed-variant": "#5e00c1",
+        "surface-container-high": "#EEE9DE",
+        "error": "#ba1a1a",
+        "secondary-container": "#F5F1E9"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "md": "16px",
+        "sm": "8px",
+        "unit": "4px",
+        "gutter": "24px",
+        "lg": "32px",
+        "xl": "64px",
+        "container-margin": "40px",
+        "xs": "4px"
+      },
+      "fontFamily": {
+        "body-lg": ["Hanken Grotesk"],
+        "display-lg": ["Bebas Neue"],
+        "body-urdu": ["Noto Sans Arabic"],
+        "label-technical": ["JetBrains Mono"],
+        "body-md": ["Hanken Grotesk"],
+        "headline-md": ["Bebas Neue"],
+        "headline-lg": ["Bebas Neue"]
+      },
+      "fontSize": {
+        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "display-lg": ["80px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "400"}],
+        "body-urdu": ["18px", {"lineHeight": "1.8", "fontWeight": "400"}],
+        "label-technical": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "500"}],
+        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+        "headline-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "400"}]
+      }
+    }
+  }
+}</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .material-symbols-outlined.filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .tab-content { display: none; }
+  #output-empty, #output-processing, #output-result { display: none; }
+  #output-empty.active { display: flex; flex-direction: column; }
+  #output-processing.active { display: flex; flex-direction: column; }
+  #output-result.active { display: flex; flex-direction: column; }
+  .pipeline-node.active { opacity: 1; }
+  .pipeline-node.active .node-dot { box-shadow: 0 0 15px rgba(130, 148, 127, 0.4); }
+  .pipeline-node.processing { opacity: 1; animation: pulse-node 1.5s ease-in-out infinite; }
+  .pipeline-node-inner.active { box-shadow: 0 0 15px rgba(130, 148, 127, 0.2); }
+  .pipeline-node-inner.processing { animation: pulse-dot 0.8s ease-in-out infinite; }
+  @keyframes pulse-node {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+  .mic-breathing { animation: breathe 2s ease-in-out infinite; }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+  .mic-listening { animation: breathe 0.8s ease-in-out infinite; }
+  .mic-processing { animation: spin-slow 2s linear infinite; }
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .waveform-bar { transition: height 0.05s ease; }
+  .skeleton {
+    background: linear-gradient(90deg, #F5F1E9 25%, #EEE9DE 50%, #F5F1E9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 0.25rem;
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .fade-in { animation: fadeIn 0.3s ease-out; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1CCC0; border-radius: 2px; }
+  .l1-accent { color: #82947F; }
+  .l2-accent { color: #7029d3; }
+  .l3-accent { color: #c4820e; }
+  .bg-l1-accent { background-color: #82947F; }
+  .bg-l2-accent { background-color: #7029d3; }
+  .bg-l3-accent { background-color: #c4820e; }
+  .border-l1-accent { border-color: #82947F; }
+  .border-l2-accent { border-color: #7029d3; }
+  .border-l3-accent { border-color: #c4820e; }
+  .text-l1 { color: #82947F; }
+  .text-l2 { color: #7029d3; }
+  .text-l3 { color: #c4820e; }
+  .bg-l1-tag { background-color: #82947F; color: #FDFBF7; }
+  .bg-l2-tag { background-color: #7029d3; color: #ffffff; }
+  .bg-l3-tag { background-color: #c4820e; color: #FDFBF7; }
+  .confidence-bar { transition: width 0.6s ease-out; }
+  #output-empty, #output-processing, #output-result { display: none; }
+  #output-empty.active { display: flex; flex-direction: column; }
+  #output-processing.active { display: flex; flex-direction: column; }
+  #output-result.active { display: flex; flex-direction: column; }
+  #test-results-table tbody tr { cursor: pointer; }
+  #test-results-table tbody tr:hover { background-color: #F5F1E9; }
+</style>
+<link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body class="bg-background text-on-background h-screen w-full flex overflow-hidden">
+
+<!-- SideNavBar -->
+<nav class="bg-background border-r border-outline-variant w-64 left-0 top-0 fixed flex flex-col py-lg px-md gap-lg z-20" style="height: 100vh; overflow-y: auto;">
+  <div class="flex items-center gap-sm mb-md px-sm">
+    <div class="w-10 h-10 rounded-none bg-surface-container-highest border border-outline-variant flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-on-surface-variant">terminal</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-headline-md font-headline-md text-on-background uppercase leading-none">VOX</span>
+      <span class="font-label-technical text-label-technical text-on-surface-variant tracking-wider uppercase">v1.0.4-beta</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-sm flex-1">
+    <!-- Tab: Voice Console -->
+    <a class="nav-tab flex items-center gap-md px-sm py-sm font-bold border-r-2 transition-all duration-100 active:scale-95 transition-transform duration-75 group cursor-pointer"
+       data-tab="voice" id="nav-voice"
+       style="color: #82947F; border-color: #82947F;">
+      <span class="material-symbols-outlined" style="color: #82947F;">mic</span>
+      <span class="font-label-technical text-label-technical uppercase tracking-wider">Voice Console</span>
+    </a>
+
+    <!-- Tab: Organization Setup -->
+    <a class="nav-tab flex items-center gap-md px-sm py-sm text-on-surface-variant border-r-2 border-transparent transition-all duration-100 active:scale-95 transition-transform duration-75 group cursor-pointer"
+       data-tab="organization" id="nav-organization">
+      <span class="material-symbols-outlined group-hover:text-primary transition-colors duration-150">database_upload</span>
+      <span class="font-label-technical text-label-technical uppercase tracking-wider group-hover:text-primary transition-colors duration-150">Organization Setup</span>
+    </a>
+
+    <!-- Tab: Evaluation -->
+    <a class="nav-tab flex items-center gap-md px-sm py-sm text-on-surface-variant border-r-2 border-transparent transition-all duration-100 active:scale-95 transition-transform duration-75 group cursor-pointer"
+       data-tab="evaluation" id="nav-evaluation">
+      <span class="material-symbols-outlined group-hover:text-primary transition-colors duration-150">insights</span>
+      <span class="font-label-technical text-label-technical uppercase tracking-wider group-hover:text-primary transition-colors duration-150">Evaluation</span>
+    </a>
+
+    <!-- Tab: Test Suite -->
+    <a class="nav-tab flex items-center gap-md px-sm py-sm text-on-surface-variant border-r-2 border-transparent transition-all duration-100 active:scale-95 transition-transform duration-75 group cursor-pointer"
+       data-tab="testsuite" id="nav-testsuite">
+      <span class="material-symbols-outlined group-hover:text-primary transition-colors duration-150">science</span>
+      <span class="font-label-technical text-label-technical uppercase tracking-wider group-hover:text-primary transition-colors duration-150">Test Suite</span>
+    </a>
+
+    <!-- Tab: Session Logs -->
+    <a class="nav-tab flex items-center gap-md px-sm py-sm text-on-surface-variant border-r-2 border-transparent transition-all duration-100 active:scale-95 transition-transform duration-75 group cursor-pointer"
+       data-tab="logs" id="nav-logs">
+      <span class="material-symbols-outlined group-hover:text-primary transition-colors duration-150">history</span>
+      <span class="font-label-technical text-label-technical uppercase tracking-wider group-hover:text-primary transition-colors duration-150">Session Logs</span>
+    </a>
+
+    <!-- Tab: System Health -->
+    <a class="nav-tab flex items-center gap-md px-sm py-sm text-on-surface-variant border-r-2 border-transparent transition-all duration-100 active:scale-95 transition-transform duration-75 group cursor-pointer"
+       data-tab="health" id="nav-health">
+      <span class="material-symbols-outlined group-hover:text-primary transition-colors duration-150">monitor_heart</span>
+      <span class="font-label-technical text-label-technical uppercase tracking-wider group-hover:text-primary transition-colors duration-150">System Health</span>
+    </a>
+  </div>
+
+  <div class="mt-auto flex items-center gap-sm px-sm py-sm border-t border-outline-variant pt-md">
+    <div class="w-8 h-8 rounded-none bg-primary-container flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-on-primary-container text-[16px] filled">person</span>
+    </div>
+    <span class="font-label-technical text-label-technical text-on-surface-variant uppercase truncate">System Operator</span>
+  </div>
+
+  <div class="text-[10px] font-label-technical text-on-surface-variant uppercase tracking-wider opacity-60">
+    <div>Queries today: <span id="sidebar-qcount">0</span></div>
+    <div>L1: <span id="sidebar-l1">0</span> | L2: <span id="sidebar-l2">0</span> | L3: <span id="sidebar-l3">0</span></div>
+  </div>
+</nav>
+
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col" style="margin-left: 256px; height: 100vh; overflow: hidden;">
+
+<!-- TopAppBar -->
+<header class="bg-background w-full top-0 border-b border-outline-variant flex justify-between items-center h-20 px-gutter z-10 shrink-0">
+  <div class="flex items-center gap-md">
+    <span class="text-headline-md font-headline-lg tracking-tighter text-on-background uppercase">VOX</span>
+    <span id="topbar-status" class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">System Ready</span>
+  </div>
+  <div class="flex items-center gap-md">
+    <span id="topbar-uptime" class="font-label-technical text-[10px] text-on-surface-variant uppercase">Uptime: 00:00:00</span>
+    <span id="topbar-latency" class="font-label-technical text-[10px] text-primary uppercase">Latency: --</span>
+    <button onclick="clearSession()" class="text-on-surface-variant hover:text-primary transition-colors duration-150 cursor-pointer active:opacity-70 flex items-center justify-center w-10 h-10 rounded-none border border-transparent hover:border-outline-variant" title="Clear Session">
+      <span class="material-symbols-outlined">delete</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB: Voice Console -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="tab-content active flex-1 overflow-hidden bg-surface-bright p-gutter flex flex-row gap-gutter" id="tab-voice" style="height: calc(100vh - 80px);">
+
+  <!-- Column 1: Live Pipeline -->
+  <section class="flex flex-col bg-surface-container-lowest border border-outline-variant rounded-none p-md" style="width: 240px; min-width: 240px; overflow: hidden;">
+    <header class="flex items-center justify-between border-b border-outline-variant pb-sm mb-md shrink-0">
+      <h2 class="font-label-technical text-label-technical text-on-surface uppercase tracking-widest">Live Pipeline</h2>
+      <span class="flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-primary opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+      </span>
+    </header>
+    <div class="flex-1 overflow-y-auto pr-sm custom-scrollbar relative" style="overflow-y: auto;">
+      <div class="absolute left-[11px] top-4 bottom-4 w-[1px] bg-outline-variant z-0"></div>
+      <div class="flex flex-col gap-md relative z-10" id="pipeline-nodes">
+
+        <!-- Node 1: STT -->
+        <div class="pipeline-node flex items-start gap-md group opacity-50" id="pipe-stt">
+          <div class="node-dot w-6 h-6 rounded-none bg-background border border-outline-variant flex items-center justify-center shrink-0 mt-[-2px]"></div>
+          <div class="flex flex-col w-full">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-label-technical text-label-technical text-on-surface uppercase">Speech-to-Text</span>
+              <span class="font-label-technical text-[10px] bg-surface-variant text-on-surface px-1 py-0.5 rounded-none uppercase">STT</span>
+            </div>
+            <div class="flex justify-between items-center opacity-70">
+              <span class="font-label-technical text-[10px] text-on-surface-variant">Whisper · base</span>
+              <span class="font-label-technical text-[10px] text-on-surface-variant text-right" id="pipe-stt-ms">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node 2: Layer 1 -->
+        <div class="pipeline-node flex items-start gap-md group opacity-50" id="pipe-l1">
+          <div class="node-dot w-6 h-6 rounded-none bg-background border border-outline-variant flex items-center justify-center shrink-0 mt-[-2px]"></div>
+          <div class="flex flex-col w-full">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-label-technical text-label-technical text-on-surface uppercase">Keyword Match</span>
+              <span class="font-label-technical text-[10px] bg-surface-variant text-on-surface px-1 py-0.5 rounded-none uppercase">L1</span>
+            </div>
+            <div class="flex justify-between items-center opacity-70">
+              <span class="font-label-technical text-[10px] text-on-surface-variant">Intelligent Handler · &lt;50ms</span>
+              <span class="font-label-technical text-[10px] text-on-surface-variant text-right" id="pipe-l1-ms">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node 3: Layer 2 -->
+        <div class="pipeline-node flex items-start gap-md group opacity-50" id="pipe-l2">
+          <div class="node-dot w-6 h-6 rounded-none bg-background border border-outline-variant flex items-center justify-center shrink-0 mt-[-2px]"></div>
+          <div class="flex flex-col w-full">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-label-technical text-label-technical text-on-surface uppercase">Semantic Search</span>
+              <span class="font-label-technical text-[10px] bg-surface-variant text-on-surface px-1 py-0.5 rounded-none uppercase">L2</span>
+            </div>
+            <div class="flex justify-between items-center opacity-70">
+              <span class="font-label-technical text-[10px] text-on-surface-variant">FAISS + Transformers · &lt;400ms</span>
+              <span class="font-label-technical text-[10px] text-on-surface-variant text-right" id="pipe-l2-ms">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node 4: Layer 3 -->
+        <div class="pipeline-node flex items-start gap-md group opacity-50" id="pipe-l3">
+          <div class="node-dot w-6 h-6 rounded-none bg-background border border-outline-variant flex items-center justify-center shrink-0 mt-[-2px]"></div>
+          <div class="flex flex-col w-full">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-label-technical text-label-technical text-on-surface uppercase">RAG + LLM</span>
+              <span class="font-label-technical text-[10px] bg-surface-variant text-on-surface px-1 py-0.5 rounded-none uppercase">L3</span>
+            </div>
+            <div class="flex justify-between items-center opacity-70">
+              <span class="font-label-technical text-[10px] text-on-surface-variant">ChromaDB + Ollama · 3-8s</span>
+              <span class="font-label-technical text-[10px] text-on-surface-variant text-right" id="pipe-l3-ms">--</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Column 2: Interaction Hub -->
+  <section class="flex-1 flex flex-col bg-surface-container-lowest border border-outline-variant rounded-none p-lg relative overflow-hidden items-center justify-center">
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#1a1b24 1px, transparent 1px); background-size: 24px 24px;"></div>
+
+    <div class="absolute top-md left-md right-md flex justify-between items-start z-10">
+      <div class="flex flex-col gap-1">
+        <span class="font-label-technical text-label-technical text-on-surface-variant uppercase">Input Source</span>
+        <span class="font-label-technical text-[14px] text-on-surface uppercase flex items-center gap-2" id="mic-source">
+          <span class="material-symbols-outlined text-[16px]">mic_external_on</span>
+          Browser Microphone
+        </span>
+      </div>
+      <div class="flex flex-col gap-1 text-right">
+        <span class="font-label-technical text-label-technical text-on-surface-variant uppercase">Queries Today</span>
+        <span class="font-label-technical text-[14px] text-primary uppercase" id="mic-qcount">0</span>
+      </div>
+    </div>
+
+    <!-- The Core Microphone -->
+    <div class="relative flex items-center justify-center">
+      <div class="absolute w-64 h-64 border border-primary-container rounded-full opacity-50 flex items-center justify-center" id="mic-outer-ring" style="box-shadow: 0 0 40px rgba(130,148,127,0.15);">
+        <div class="w-[250px] h-[250px] border border-primary-container/30 rounded-full"></div>
+      </div>
+      <div class="relative w-40 h-40 bg-surface-container border border-outline-variant rounded-full flex items-center justify-center z-10 cursor-pointer transition-all duration-200" id="mic-button" style="box-shadow: inset 0 0 20px rgba(0,0,0,0.02);">
+        <span class="material-symbols-outlined text-primary" style="font-size: 64px; font-variation-settings: 'wght' 200;" id="mic-icon">mic</span>
+      </div>
+    </div>
+
+    <!-- Status Text -->
+    <div class="mt-lg text-center z-10">
+      <span class="font-label-technical text-label-technical text-on-surface tracking-[0.2em] uppercase" id="mic-status">Tap to Speak</span>
+    </div>
+    <div class="mt-sm text-center z-10 opacity-60">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">or press Spacebar</span>
+    </div>
+
+    <!-- Waveform Visualization -->
+    <div class="absolute bottom-md left-md right-md h-24 flex items-end justify-center gap-[2px] opacity-80 z-10" id="waveform-container">
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+      <div class="w-1 bg-primary-container h-[5%] waveform-bar"></div>
+    </div>
+  </section>
+
+  <!-- Column 3: Live Output -->
+  <section class="flex flex-col bg-surface-container-lowest border border-outline-variant rounded-none p-md" style="width: 280px; min-width: 280px; overflow: hidden;">
+    <header class="flex items-center justify-between border-b border-outline-variant pb-sm mb-md shrink-0">
+      <h2 class="font-label-technical text-label-technical text-on-surface uppercase tracking-widest">Live Output</h2>
+      <span id="output-layer-badge" class="font-label-technical text-[10px] bg-surface-variant text-on-surface px-1 py-0.5 rounded-none uppercase hidden">L1</span>
+    </header>
+
+    <div class="flex flex-col flex-1 gap-md" style="overflow-y: auto;">
+
+      <!-- State: Empty -->
+      <div class="flex flex-col items-center justify-center gap-md active" id="output-empty" style="min-height: 120px;">
+        <span class="material-symbols-outlined text-on-surface-variant text-[48px]" style="font-variation-settings: 'wght' 200;">mic_double</span>
+        <span class="font-label-technical text-label-technical text-on-surface-variant uppercase text-center">No session active.<br/>Tap the microphone to begin.</span>
+      </div>
+
+      <!-- State: Processing -->
+      <div class="flex flex-col items-center justify-center gap-md" id="output-processing" style="min-height: 120px;">
+        <span class="material-symbols-outlined text-primary text-[48px] mic-processing">sync</span>
+        <span class="font-label-technical text-label-technical text-primary uppercase tracking-widest">Processing...</span>
+        <div class="flex gap-sm mt-sm">
+          <div class="w-8 h-1 skeleton rounded-full"></div>
+          <div class="w-16 h-1 skeleton rounded-full"></div>
+          <div class="w-12 h-1 skeleton rounded-full"></div>
+          <div class="w-20 h-1 skeleton rounded-full"></div>
+        </div>
+      </div>
+
+      <!-- State: Result -->
+      <div class="flex flex-col gap-md" id="output-result">
+
+        <!-- Metadata Chips -->
+        <div class="flex flex-wrap gap-sm" id="output-chips">
+          <div class="flex items-center gap-2 bg-surface-container border border-outline-variant px-2 py-1 rounded-none">
+            <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Conf</span>
+            <span class="font-label-technical text-[12px] text-primary" id="chip-confidence">--</span>
+          </div>
+          <div class="flex items-center gap-2 bg-surface-container border border-outline-variant px-2 py-1 rounded-none">
+            <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Intent</span>
+            <span class="font-label-technical text-[12px] text-on-surface" id="chip-intent">--</span>
+          </div>
+          <div class="flex items-center gap-2 bg-surface-container border border-outline-variant px-2 py-1 rounded-none">
+            <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Lang</span>
+            <span class="font-label-technical text-[12px] text-on-surface" id="chip-lang">--</span>
+          </div>
+          <div class="flex items-center gap-2 bg-surface-container border border-outline-variant px-2 py-1 rounded-none">
+            <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Layer</span>
+            <span class="font-label-technical text-[12px] text-on-surface" id="chip-layer">--</span>
+          </div>
+          <div class="flex items-center gap-2 bg-surface-container border border-outline-variant px-2 py-1 rounded-none">
+            <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Time</span>
+            <span class="font-label-technical text-[12px] text-on-surface" id="chip-time">--</span>
+          </div>
+        </div>
+
+        <!-- Confidence Gauge -->
+        <div class="w-full bg-surface-container-highest border border-outline-variant h-1 rounded-none overflow-hidden">
+          <div class="confidence-bar h-full bg-primary transition-all duration-500" id="confidence-gauge" style="width: 0%;"></div>
+        </div>
+
+        <!-- Transcription Panel -->
+        <div class="flex flex-col gap-sm">
+          <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest border-l-2 border-outline-variant pl-2">User Transcription</span>
+          <p class="font-body-md text-body-md text-on-surface pl-2" id="output-transcription"></p>
+        </div>
+
+        <!-- Divider -->
+        <div class="h-[1px] w-full bg-outline-variant opacity-50"></div>
+
+        <!-- AI Response Panel -->
+        <div class="flex flex-col gap-sm">
+          <span class="font-label-technical text-[10px] text-primary uppercase tracking-widest border-l-2 border-primary-container pl-2">AI Response</span>
+          <div class="bg-background border border-outline-variant rounded-none p-sm flex flex-col gap-md">
+            <p class="font-body-md text-body-md text-on-background" id="output-response"></p>
+
+            <!-- Urdu output (shown only when lang=ur) -->
+            <div class="border-t border-outline-variant pt-sm hidden" id="output-urdu-section">
+              <span class="font-label-technical text-[10px] text-on-surface-variant uppercase block mb-1">Urdu Output</span>
+              <p class="font-body-urdu text-body-urdu text-on-surface text-right" dir="rtl" id="output-urdu-text"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Replay Button -->
+        <button id="btn-replay" onclick="replayLastAudio()" class="hidden w-full flex items-center justify-center gap-sm py-sm px-md bg-surface-container border border-outline-variant text-on-surface hover:bg-surface-container-highest transition-colors cursor-pointer active:scale-95">
+          <span class="material-symbols-outlined text-[16px]">volume_up</span>
+          <span class="font-label-technical text-label-technical uppercase">Replay Audio</span>
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB: Organization Setup -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="tab-content flex-1 overflow-y-auto bg-surface-bright p-gutter flex flex-col gap-lg" id="tab-organization">
+  <div class="flex items-start justify-between gap-lg">
+    <div>
+      <h2 class="text-headline-md font-headline-md text-on-background uppercase">Organization Setup</h2>
+      <p class="font-label-technical text-label-technical text-on-surface-variant mt-sm">Dataset onboarding and intent publishing</p>
+    </div>
+    <button onclick="refreshOrganizationSetup()" class="px-md py-sm bg-surface-container border border-outline-variant font-label-technical text-[10px] text-on-surface uppercase hover:bg-surface-container-highest transition-colors cursor-pointer">Refresh</button>
+  </div>
+
+  <section class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col md:flex-row md:items-end gap-md">
+    <div class="flex-1">
+      <h3 class="font-label-technical text-label-technical text-on-surface uppercase">Admin Access</h3>
+      <p class="text-body-md text-on-surface-variant mt-sm">Enter the VOX admin token to manage organizations, datasets, jobs, and intents.</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-sm sm:items-center w-full md:w-auto">
+      <input id="admin-token-input" type="password" placeholder="Admin token" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface min-w-[260px]"/>
+      <button onclick="saveAdminToken()" class="px-md py-sm bg-primary text-on-primary font-label-technical text-[10px] uppercase hover:opacity-90 transition-opacity cursor-pointer">Save Token</button>
+      <button onclick="clearAdminToken()" class="px-md py-sm bg-surface-container border border-outline-variant font-label-technical text-[10px] text-on-surface uppercase hover:bg-surface-container-highest transition-colors cursor-pointer">Clear</button>
+    </div>
+    <div class="font-label-technical text-[10px] text-on-surface-variant uppercase" id="admin-access-status">Checking...</div>
+  </section>
+
+  <section class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-md">
+    <div>
+      <h3 class="font-label-technical text-label-technical text-on-surface uppercase">Admin Tokens</h3>
+      <p class="text-body-md text-on-surface-variant mt-sm">Create revocable operator tokens. The new token is shown once.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-sm">
+      <input id="admin-token-name" type="text" placeholder="Token name" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface"/>
+      <input id="admin-token-org" type="text" placeholder="Org id, optional" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface"/>
+      <select id="admin-token-scope" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface">
+        <option value="admin">Admin</option>
+        <option value="read">Read only</option>
+      </select>
+      <input id="admin-token-days" type="number" min="1" max="3650" value="90" placeholder="Expires in days" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface"/>
+      <button onclick="createAdminToken()" class="px-md py-sm bg-primary text-on-primary font-label-technical text-[10px] uppercase hover:opacity-90 transition-opacity cursor-pointer">Create Token</button>
+    </div>
+    <div id="admin-token-created" class="hidden bg-background border border-outline-variant p-sm font-label-technical text-[10px] text-on-surface break-all"></div>
+    <div id="admin-token-list" class="border border-outline-variant bg-background p-sm max-h-48 overflow-y-auto custom-scrollbar">
+      <span class="text-body-md text-on-surface-variant">Admin token required.</span>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-4 gap-md">
+    <div class="bg-surface-container-lowest border border-outline-variant p-md">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Organization</span>
+      <div class="text-body-md font-bold text-on-surface mt-sm" id="org-name">--</div>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Documents</span>
+      <div class="text-headline-md font-headline-md text-on-surface mt-sm" id="org-doc-count">0</div>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Chunks</span>
+      <div class="text-headline-md font-headline-md text-on-surface mt-sm" id="org-chunk-count">0</div>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Live Intents</span>
+      <div class="text-headline-md font-headline-md text-on-surface mt-sm" id="org-active-intents">0</div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 xl:grid-cols-2 gap-lg">
+    <div class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-md">
+      <div>
+        <h3 class="font-label-technical text-label-technical text-on-surface uppercase">Organizations</h3>
+        <p class="text-body-md text-on-surface-variant mt-sm">Create isolated workspaces for each company or department.</p>
+      </div>
+      <div class="border border-outline-variant bg-background p-sm max-h-56 overflow-y-auto custom-scrollbar" id="org-list">
+        <span class="text-body-md text-on-surface-variant">Loading organizations...</span>
+      </div>
+    </div>
+
+    <div class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-md">
+      <div>
+        <h3 class="font-label-technical text-label-technical text-on-surface uppercase">Create Organization</h3>
+        <p class="text-body-md text-on-surface-variant mt-sm">New organizations start with empty documents, vector index, and intents.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+        <input id="new-org-id" type="text" placeholder="org-id" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface"/>
+        <input id="new-org-name" type="text" placeholder="Organization name" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface"/>
+        <input id="new-org-domain" type="text" placeholder="Domain, e.g. healthcare" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface"/>
+        <input id="new-org-assistant" type="text" placeholder="Assistant name" value="VOX" class="bg-background border border-outline-variant p-sm text-body-md text-on-surface"/>
+      </div>
+      <button onclick="createOrganization()" class="w-fit px-md py-sm bg-primary text-on-primary font-label-technical text-[10px] uppercase hover:opacity-90 transition-opacity cursor-pointer">Create Organization</button>
+      <p class="font-label-technical text-[10px] text-on-surface-variant uppercase">API clients can target an organization with X-VOX-Org-ID. VOX_ORG_ID remains the default organization at startup.</p>
+    </div>
+  </section>
+
+  <section class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-md">
+    <div class="flex items-start justify-between gap-md">
+      <div>
+        <h3 class="font-label-technical text-label-technical text-on-surface uppercase">Dataset Versions</h3>
+        <p class="text-body-md text-on-surface-variant mt-sm">Restore a previous processed dataset and vector index snapshot.</p>
+      </div>
+      <button onclick="refreshDatasetVersions()" class="px-md py-sm bg-surface-container border border-outline-variant font-label-technical text-[10px] text-on-surface uppercase hover:bg-surface-container-highest transition-colors cursor-pointer">Refresh</button>
+    </div>
+    <div id="dataset-version-list" class="border border-outline-variant bg-background p-sm max-h-56 overflow-y-auto custom-scrollbar">
+      <span class="text-body-md text-on-surface-variant">Admin token required.</span>
+    </div>
+  </section>
+
+  <section class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-md">
+    <div class="flex items-start justify-between gap-md">
+      <div>
+        <h3 class="font-label-technical text-label-technical text-on-surface uppercase">Human Handoffs</h3>
+        <p class="text-body-md text-on-surface-variant mt-sm">Open follow-ups created when VOX cannot confidently answer.</p>
+      </div>
+      <button onclick="refreshHandoffs()" class="px-md py-sm bg-surface-container border border-outline-variant font-label-technical text-[10px] text-on-surface uppercase hover:bg-surface-container-highest transition-colors cursor-pointer">Refresh</button>
+    </div>
+    <div id="handoff-list" class="border border-outline-variant bg-background p-sm max-h-72 overflow-y-auto custom-scrollbar">
+      <span class="text-body-md text-on-surface-variant">Admin token required.</span>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 xl:grid-cols-2 gap-lg">
+    <div class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-md">
+      <div>
+        <h3 class="font-label-technical text-label-technical text-on-surface uppercase">1. Upload Dataset</h3>
+        <p class="text-body-md text-on-surface-variant mt-sm">Add PDF, text, CSV, TSV, or spreadsheet files for this organization.</p>
+      </div>
+      <input id="org-file-input" type="file" multiple accept=".pdf,.txt,.csv,.tsv,.xlsx,.xls" class="block w-full text-body-md text-on-surface border border-outline-variant bg-background p-sm"/>
+      <div class="flex gap-sm flex-wrap">
+        <button onclick="uploadOrganizationDataset()" id="btn-upload-dataset" class="px-md py-sm bg-primary text-on-primary font-label-technical text-[10px] uppercase hover:opacity-90 transition-opacity cursor-pointer">Upload</button>
+        <button onclick="processOrganizationDataset()" id="btn-process-dataset" class="px-md py-sm bg-surface-container border border-outline-variant font-label-technical text-[10px] text-on-surface uppercase hover:bg-surface-container-highest transition-colors cursor-pointer">Process and Embed</button>
+      </div>
+      <div class="font-label-technical text-[10px] text-on-surface-variant uppercase" id="org-index-status">Index: not started</div>
+      <div class="border border-outline-variant bg-background p-sm max-h-64 overflow-y-auto custom-scrollbar" id="org-doc-list">
+        <span class="text-body-md text-on-surface-variant">No documents uploaded yet.</span>
+      </div>
+    </div>
+
+    <div class="border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-md">
+      <div>
+        <h3 class="font-label-technical text-label-technical text-on-surface uppercase">2. Generate and Publish Intents</h3>
+        <p class="text-body-md text-on-surface-variant mt-sm">Create draft intents from processed chunks, review the count, then publish them into VOX.</p>
+      </div>
+      <div class="flex gap-sm flex-wrap">
+        <button onclick="generateOrganizationIntents()" id="btn-generate-intents" class="px-md py-sm bg-primary text-on-primary font-label-technical text-[10px] uppercase hover:opacity-90 transition-opacity cursor-pointer">Generate Draft</button>
+        <button onclick="publishOrganizationIntents()" id="btn-publish-intents" class="px-md py-sm bg-surface-container border border-outline-variant font-label-technical text-[10px] text-on-surface uppercase hover:bg-surface-container-highest transition-colors cursor-pointer">Publish Draft</button>
+      </div>
+      <div class="grid grid-cols-2 gap-md">
+        <div class="bg-background border border-outline-variant p-sm">
+          <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Draft Intents</span>
+          <div class="text-headline-md font-headline-md text-on-surface mt-sm" id="org-draft-count">0</div>
+        </div>
+        <div class="bg-background border border-outline-variant p-sm">
+          <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Draft Method</span>
+          <div class="font-label-technical text-[10px] text-on-surface mt-sm uppercase" id="org-draft-method">--</div>
+        </div>
+      </div>
+      <div class="border border-outline-variant bg-background p-sm max-h-64 overflow-y-auto custom-scrollbar" id="org-draft-list">
+        <span class="text-body-md text-on-surface-variant">No draft generated yet.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="border-l-2 border-primary-container pl-md py-sm text-body-md text-on-surface" id="org-last-message">Ready for organization setup.</div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB: Evaluation Dashboard -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="tab-content flex-1 overflow-y-auto bg-surface-bright p-gutter flex flex-col gap-lg" id="tab-evaluation">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-headline-md font-headline-md text-on-background uppercase">Evaluation Dashboard</h2>
+      <p class="font-label-technical text-label-technical text-on-surface-variant mt-sm">114 queries · Layers 1+2 · <span id="eval-timestamp">Not yet run</span></p>
+    </div>
+    <button onclick="runEvaluation()" class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary font-label-technical text-label-technical uppercase tracking-wider hover:opacity-90 transition-opacity cursor-pointer active:scale-95" id="btn-eval-run">
+      <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+      Re-run Evaluation
+    </button>
+  </div>
+
+  <!-- Metric Cards -->
+  <div class="grid grid-cols-7 gap-md" id="eval-metric-cards">
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-sm">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">F1 Score</span>
+      <span class="text-headline-md font-headline-md text-primary" id="eval-f1">--</span>
+      <span class="font-label-technical text-[10px] text-on-surface-variant">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-sm">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">ROUGE-L</span>
+      <span class="text-headline-md font-headline-md text-primary" id="eval-rouge">--</span>
+      <span class="font-label-technical text-[10px] text-on-surface-variant">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-sm">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">BLEU</span>
+      <span class="text-headline-md font-headline-md text-primary" id="eval-bleu">--</span>
+      <span class="font-label-technical text-[10px] text-on-surface-variant">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-sm">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">METEOR</span>
+      <span class="text-headline-md font-headline-md text-primary" id="eval-meteor">--</span>
+      <span class="font-label-technical text-[10px] text-on-surface-variant">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-sm">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">LaaJ</span>
+      <span class="text-headline-md font-headline-md text-primary" id="eval-laaj">--</span>
+      <span class="font-label-technical text-[10px] text-on-surface-variant">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-sm">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">WER</span>
+      <span class="text-headline-md font-headline-md text-primary" id="eval-wer">--</span>
+      <span class="font-label-technical text-[10px] text-on-surface-variant">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-sm">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase tracking-widest">Accuracy</span>
+      <span class="text-headline-md font-headline-md text-primary" id="eval-accuracy">--</span>
+      <span class="font-label-technical text-[10px] text-on-surface-variant">--</span>
+    </div>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="grid grid-cols-3 gap-md">
+    <div class="bg-surface-container-lowest border border-outline-variant p-md"><canvas id="chart-radar"></canvas></div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md"><canvas id="chart-f1-intent"></canvas></div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md"><canvas id="chart-rouge"></canvas></div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md"><canvas id="chart-bleu-dist"></canvas></div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md"><canvas id="chart-laaj-pie"></canvas></div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md"><canvas id="chart-wer-bar"></canvas></div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB: Test Suite -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="tab-content flex-1 overflow-y-auto bg-surface-bright p-gutter flex flex-col gap-lg" id="tab-testsuite">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-headline-md font-headline-md text-on-background uppercase">Test Suite</h2>
+      <p class="font-label-technical text-label-technical text-on-surface-variant mt-sm">114 queries · 57 Urdu + 57 Roman Urdu</p>
+    </div>
+    <div class="flex items-center gap-md">
+      <select id="test-filter" class="bg-surface-container border border-outline-variant px-md py-sm font-label-technical text-label-technical text-on-surface uppercase" onchange="filterTestResults()">
+        <option value="all">All</option>
+        <option value="pass">Pass</option>
+        <option value="fail">Fail</option>
+      </select>
+      <button onclick="runTestSuite()" class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary font-label-technical text-label-technical uppercase tracking-wider hover:opacity-90 transition-opacity cursor-pointer active:scale-95" id="btn-test-run">
+        <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+        Run All
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-5 gap-md" id="test-summary">
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-xs">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Total</span>
+      <span class="text-headline-md font-headline-md text-on-surface" id="ts-total">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-xs">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Passed</span>
+      <span class="text-headline-md font-headline-md text-primary" id="ts-passed">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-xs">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Failed</span>
+      <span class="text-headline-md font-headline-md text-error" id="ts-failed">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-xs">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Suite 1</span>
+      <span class="text-headline-md font-headline-md text-on-surface" id="ts-s1">--</span>
+    </div>
+    <div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col items-center gap-xs">
+      <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Suite 2</span>
+      <span class="text-headline-md font-headline-md text-on-surface" id="ts-s2">--</span>
+    </div>
+  </div>
+
+  <!-- Results Table -->
+  <div class="bg-surface-container-lowest border border-outline-variant overflow-hidden flex-1">
+    <div class="overflow-y-auto max-h-[calc(100vh-340px)] custom-scrollbar">
+      <table class="w-full" id="test-results-table">
+        <thead class="sticky top-0 bg-surface-container border-b border-outline-variant">
+          <tr>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">#</th>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Status</th>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Query</th>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Expected</th>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Got</th>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Conf</th>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">L</th>
+            <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Script</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB: Session Logs -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="tab-content flex-1 overflow-y-auto bg-surface-bright p-gutter flex flex-col gap-lg" id="tab-logs">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-headline-md font-headline-md text-on-background uppercase">Session Logs</h2>
+      <p class="font-label-technical text-label-technical text-on-surface-variant mt-sm" id="logs-count">0 interactions</p>
+    </div>
+    <button onclick="clearSession()" class="flex items-center gap-sm px-lg py-sm bg-error-container text-on-error-container font-label-technical text-label-technical uppercase tracking-wider hover:opacity-90 transition-opacity cursor-pointer active:scale-95">
+      <span class="material-symbols-outlined text-[16px]">delete</span>
+      Clear All
+    </button>
+  </div>
+  <div class="flex flex-col gap-sm" id="logs-list">
+    <div class="bg-surface-container-lowest border border-outline-variant p-xl flex flex-col items-center justify-center gap-md" id="logs-empty">
+      <span class="material-symbols-outlined text-on-surface-variant text-[48px]" style="font-variation-settings: 'wght' 200;">history</span>
+      <span class="font-label-technical text-label-technical text-on-surface-variant uppercase">No interactions yet.</span>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TAB: System Health -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="tab-content flex-1 overflow-y-auto bg-surface-bright p-gutter flex flex-col gap-lg" id="tab-health">
+  <div>
+    <h2 class="text-headline-md font-headline-md text-on-background uppercase">System Health</h2>
+    <p class="font-label-technical text-label-technical text-on-surface-variant mt-sm">Real-time component status</p>
+  </div>
+  <div class="bg-surface-container-lowest border border-outline-variant">
+    <table class="w-full" id="health-table">
+      <thead class="border-b border-outline-variant bg-surface-container">
+        <tr>
+          <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Component</th>
+          <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Status</th>
+          <th class="font-label-technical text-[10px] text-on-surface-variant uppercase text-left px-md py-sm">Detail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-outline-variant"><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">Whisper STT</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-whisper">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant">base model</td></tr>
+        <tr class="border-b border-outline-variant"><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">Intent Handler</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-handler">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant">16 intents</td></tr>
+        <tr class="border-b border-outline-variant"><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">Semantic Search</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-classifier">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant">FAISS index</td></tr>
+        <tr class="border-b border-outline-variant"><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">ChromaDB</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-chroma">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant" id="h-chroma-detail">--</td></tr>
+        <tr class="border-b border-outline-variant"><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">Ollama LLM</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-ollama">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant">qwen3.2:3b</td></tr>
+        <tr class="border-b border-outline-variant"><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">Argos Translate</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-argos">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant">ur↔en</td></tr>
+        <tr class="border-b border-outline-variant"><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">TTS (Kokoro)</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-gtts">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant">local-first</td></tr>
+        <tr><td class="px-md py-sm font-label-technical text-label-technical text-on-surface">GPU</td><td class="px-md py-sm"><span class="font-label-technical text-[10px]" id="h-gpu">Checking...</span></td><td class="px-md py-sm font-label-technical text-[10px] text-on-surface-variant" id="h-gpu-detail">--</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="flex gap-md items-center">
+    <span class="font-label-technical text-[10px] text-on-surface-variant uppercase">Refresh</span>
+    <button onclick="fetchStatus()" class="px-md py-sm bg-surface-container border border-outline-variant font-label-technical text-[10px] text-on-surface uppercase hover:bg-surface-container-highest transition-colors cursor-pointer">⟳</button>
+  </div>
+</main>
+
+</div>
+
+<audio id="audio-player" class="hidden"></audio>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

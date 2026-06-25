@@ -1,0 +1,1 @@
+-- Compatibility migration for deployments created before expiring admin tokens.

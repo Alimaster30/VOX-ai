@@ -1,0 +1,29 @@
+{
+  "org_id": "default",
+  "organization_name": "Air University Multan Campus",
+  "assistant_name": "VOX",
+  "domain": "university",
+  "supported_languages": ["en", "ur"],
+  "legacy_intent_handler": true,
+  "llm_model": "qwen3.2:3b",
+  "embedding_model": "nomic-embed-text",
+  "chroma_dir": "./organizations/default/vector_index",
+  "intents_path": "./organizations/default/intents.json",
+  "source_data_dir": "./organizations/default/documents",
+  "cache_dir": "./organizations/default/cache",
+  "greetings": {
+    "en": "Assalam o Alaikum! Welcome to Air University Multan Campus. How can I help you today?",
+    "ur": "السلام علیکم! ایئر یونیورسٹی ملتان کیمپس میں خوش آمدید۔ میں آپ کی کیا مدد کر سکتا ہوں؟"
+  },
+  "fallback": {
+    "en": "Sorry, I could not answer that from the available organization data. Please contact support.",
+    "ur": "معذرت، میں دستیاب معلومات سے اس سوال کا جواب نہیں دے سکا۔ براہ کرم سپورٹ سے رابطہ کریں۔"
+  },
+  "handoff": {
+    "department": "Admission Office",
+    "phone": "+92-61-9213456",
+    "email": "admissions@au.edu.pk",
+    "hours": "8 AM to 5 PM"
+  },
+  "rag_system_prompt": "You are VOX, a helpful assistant for {organization_name}. Use only the provided organization context to answer accurately and in a friendly, human tone. If the context is insufficient, say you do not have enough confirmed information and suggest contacting support."
+}
