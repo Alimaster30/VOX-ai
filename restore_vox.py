@@ -14,9 +14,10 @@ POSTGRES_DUMP_ARCHIVE_NAME = "database/postgres.sql"
 SUPPORT_FILES = {
     ".env.example",
     "requirements.txt",
-    "PRODUCTION.md",
-    "DEPLOYMENT_CHECKLIST.md",
-    "LEGACY.md",
+    "README.md",
+    "docs/PRODUCTION.md",
+    "docs/DEPLOYMENT_CHECKLIST.md",
+    "docs/LEGACY.md",
     "serve.py",
     "smoke_test.py",
     "migrate_db.py",
@@ -30,11 +31,11 @@ SUPPORT_FILES = {
     "run_maintenance.bat",
     "run_maintenance.sh",
     "requirements-ci.txt",
-    "CI.md",
-    "DATABASE.md",
-    "BACKUP_RESTORE.md",
-    "LOAD_TESTING.md",
-    "MONITORING.md",
+    "docs/CI.md",
+    "docs/DATABASE.md",
+    "docs/BACKUP_RESTORE.md",
+    "docs/LOAD_TESTING.md",
+    "docs/MONITORING.md",
 }
 
 

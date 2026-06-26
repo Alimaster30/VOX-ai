@@ -6,7 +6,8 @@ from backup_vox import collect_backup_files
 
 def test_deployment_artifacts_exist():
     required = [
-        "DEPLOYMENT_CHECKLIST.md",
+        "README.md",
+        "docs/DEPLOYMENT_CHECKLIST.md",
         "deploy/windows/install_services.ps1",
         "deploy/windows/uninstall_services.ps1",
         "deploy/linux/systemd/vox-web.service",
@@ -24,9 +25,9 @@ def test_deployment_artifacts_exist():
         "deploy/monitoring/grafana/dashboards/vox-overview.json",
         ".github/workflows/ci.yml",
         "requirements-ci.txt",
-        "CI.md",
-        "DATABASE.md",
-        "BACKUP_RESTORE.md",
+        "docs/CI.md",
+        "docs/DATABASE.md",
+        "docs/BACKUP_RESTORE.md",
         "smoke_test.py",
         "migrate_db.py",
         "src/migrations/sqlite/001_initial_schema.sql",
@@ -43,18 +44,19 @@ def test_backup_includes_deployment_templates():
     root = Path.cwd().resolve()
     files = {path.resolve().relative_to(root).as_posix() for path in collect_backup_files()}
 
-    assert "DEPLOYMENT_CHECKLIST.md" in files
+    assert "README.md" in files
+    assert "docs/DEPLOYMENT_CHECKLIST.md" in files
     assert "deploy/linux/systemd/vox-web.service" in files
     assert "deploy/windows/install_services.ps1" in files
     assert "deploy/reverse-proxy/nginx.conf" in files
     assert "deploy/postgres/docker-compose.yml" in files
     assert "deploy/monitoring/prometheus/prometheus.yml" in files
-    assert "MONITORING.md" in files
+    assert "docs/MONITORING.md" in files
     assert ".github/workflows/ci.yml" in files
     assert "requirements-ci.txt" in files
-    assert "CI.md" in files
-    assert "DATABASE.md" in files
-    assert "BACKUP_RESTORE.md" in files
+    assert "docs/CI.md" in files
+    assert "docs/DATABASE.md" in files
+    assert "docs/BACKUP_RESTORE.md" in files
     assert "smoke_test.py" in files
     assert "migrate_db.py" in files
     assert "src/migrations/sqlite/001_initial_schema.sql" in files
